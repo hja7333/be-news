@@ -23,19 +23,6 @@ describe("app", () => {
         });
     });
 
-    // test("200: GET - topic information in object is correct datatype", () => {
-    //   return request(app)
-    //     .get("/api/topics")
-    //     .expect(200)
-    //     .then((response) => {
-    //       response.body.topics.forEach((topic) => {
-    //         expect(topic).toMatchObject({
-    //           slug: expect.any(String),
-    //           description: expect.any(String),
-    //         });
-    //       });
-    //     });
-    // });
     test("200: GET - responds with an array of topics", () => {
       return request(app)
         .get("/api/topics")
