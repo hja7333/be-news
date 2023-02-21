@@ -10,9 +10,9 @@ function fetchArticles() {
     .query(
       `SELECT 
       articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, 
-      COUNT(COMMENTS.COMMENT_ID) AS comment_count FROM articles 
+      COUNT(comments.article_ID)::int AS comment_count FROM articles 
       LEFT JOIN comments ON articles.article_id = comments.article_id 
-      GROUP BY articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url
+      GROUP BY articles.article_id
       ORDER BY 
       created_at DESC;`
     )
