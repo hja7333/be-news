@@ -29,7 +29,6 @@ describe("app", () => {
         .expect(200)
         .then(({ body }) => {
           const { topics } = body;
-          console.log(topics);
           expect(topics).toBeInstanceOf(Array);
           expect(topics).toHaveLength(3);
           topics.forEach((topic) => {
