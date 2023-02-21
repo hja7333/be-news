@@ -1,12 +1,24 @@
-const { fetchTopics } = require("../models/newsModels");
+const { fetchTopics, fetchArticles } = require("../models/newsModels");
 
 function fetchAllTopics(request, response) {
   fetchTopics()
-    .then((topicData) => {
-      response.status(200).send({ topics: topicData });
+    .then((data) => {
+      console.log(data);
+      response.status(200).send({ topics: data });
     })
     .catch((err) => {
       next(err);
     });
 }
-module.exports = { fetchAllTopics };
+
+function fetchAllArticles(request, response) {
+  fetchArticles()
+    .then((topicData) => {
+      response.status(200).send({ articles: topicData });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+module.exports = { fetchAllTopics, fetchAllArticles };
