@@ -13,9 +13,8 @@ function fetchAllTopics(request, response) {
 
 function fetchAllArticles(request, response) {
   fetchArticles()
-    .then((data) => {
-      console.log(data);
-      response.status(200).send({ articles: data });
+    .then((topicData) => {
+      response.status(200).send({ articles: topicData });
     })
     .catch((err) => {
       next(err);
