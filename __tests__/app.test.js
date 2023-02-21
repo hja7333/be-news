@@ -1,7 +1,7 @@
 const request = require("supertest");
 const db = require("../db/connection");
 const app = require("../app");
-const { seed } = require("../db/seeds/seed");
+const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
 
 beforeEach(() => {
@@ -39,5 +39,27 @@ describe("app", () => {
           });
         });
     });
+    // test("200: GET - responds with an array of topics", () => {
+    //   return request(app)
+    //     .get("/api/articles")
+    //     .expect(200)
+    //     .then(({ body }) => {
+    //       const { articles } = body;
+    //       expect(articles).toBeInstanceOf(Array);
+    //       expect(articles).toHaveLength(3);
+    //       articles.forEach((article) => {
+    //         expect(article).toMatchObject({
+    //           author: expect.any(String),
+    //           title: expect.any(String),
+    //           article_id: expect.any(Number),
+    //           body: expect.any(String),
+    //           topic: expect.any(String),
+    //           created_at: expect.any(Number),
+    //           votes: expect.any(Number),
+    //           article_img_url: expect.any(String),
+    //         });
+    //       });
+    //     });
+    // });
   });
 });
