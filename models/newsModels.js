@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+// const articles = require("../db/data/test-data/articles");
 
 exports.fetchTopics = () => {
   return db.query(`SELECT * FROM topics;`).then((topics) => {
@@ -36,5 +37,15 @@ exports.fetchArticleById = (id) => {
       } else {
         return articles[0];
       }
+    });
+};
+exports.fetchCommentsForArticle = (id) => {
+  return db
+    .query(
+      `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`,
+      [id]
+    )
+    .then(({ rows: comments }) => {
+      return comments;
     });
 };
