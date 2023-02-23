@@ -13,55 +13,54 @@ afterAll(() => {
 });
 
 describe("app", () => {
-  describe("GET /api/topics", () => {
-    test("200: GET - responds with an array", () => {
-      return request(app)
-        .get("/api/topics")
-        .expect(200)
-        .then((response) => {
-          expect(response.body.topics).toBeInstanceOf(Array);
-        });
-    });
-
-    test("200: GET - responds with an array of topics", () => {
-      return request(app)
-        .get("/api/topics")
-        .expect(200)
-        .then(({ body }) => {
-          const { topics } = body;
-          expect(topics).toBeInstanceOf(Array);
-          expect(topics).toHaveLength(3);
-          topics.forEach((topic) => {
-            expect(topic).toMatchObject({
-              slug: expect.any(String),
-              description: expect.any(String),
-            });
-          });
-        });
-    });
-    test("200: GET - Responds with an articles array of article objects", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body }) => {
-          const { articles } = body;
-          expect(articles).toBeInstanceOf(Object);
-          expect(articles).toHaveLength(12);
-          articles.forEach((article) => {
-            expect(article).toMatchObject({
-              author: expect.any(String),
-              title: expect.any(String),
-              article_id: expect.any(Number),
-              topic: expect.any(String),
-              created_at: expect.any(String),
-              votes: expect.any(Number),
-              article_img_url: expect.any(String),
-              comment_count: expect.any(Number),
-            });
-          });
-        });
-    });
+  test("200: GET - responds with an array", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.topics).toBeInstanceOf(Array);
+      });
   });
+
+  test("200: GET - responds with an array of topics", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body }) => {
+        const { topics } = body;
+        expect(topics).toBeInstanceOf(Array);
+        expect(topics).toHaveLength(3);
+        topics.forEach((topic) => {
+          expect(topic).toMatchObject({
+            slug: expect.any(String),
+            description: expect.any(String),
+          });
+        });
+      });
+  });
+  test("200: GET - Responds with an articles array of article objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Object);
+        expect(articles).toHaveLength(12);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+
   test("200: GET - Responds with a single article object", () => {
     return request(app)
       .get("/api/articles/1")
@@ -88,12 +87,61 @@ describe("app", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("404: GET responds with correct message for valid but non-existant article_ids", () => {
+  test("404: GET responds with correct message for valid but non-existent article_ids", () => {
     return request(app)
-      .get("/api/articles/10000")
+      .get("/api/articles/1000")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("not found");
+      });
+  });
+  test("200: GET - Responds with an array of comments for the given article_id", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([
+          {
+            article_id: 3,
+            author: "icellusedkars",
+            body: "Ambidextrous marsupial",
+            comment_id: 11,
+            created_at: "2020-09-19T23:10:00.000Z",
+            votes: 0,
+          },
+          {
+            article_id: 3,
+            author: "icellusedkars",
+            body: "git push origin master",
+            comment_id: 10,
+            created_at: "2020-06-20T07:24:00.000Z",
+            votes: 0,
+          },
+        ]);
+      });
+  });
+  test("400: GET invalid article_id parametric endpoint", () => {
+    return request(app)
+      .get("/api/articles/not_valid_id/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("404: GET responds with correct message for valid but non-existent article_ids", () => {
+    return request(app)
+      .get("/api/articles/1000/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test("200: GET - Responds with an empty array for article_id with no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
       });
   });
 });
