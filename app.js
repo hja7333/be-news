@@ -1,13 +1,22 @@
 const express = require("express");
+const app = express();
 const {
   fetchAllTopics,
   fetchAllArticles,
+  getArticleById,
 } = require("../be-nc-news/controllers/newsControllers");
-const error500 = require("../be-nc-news/controllers/errorControllers");
-const app = express();
+
+const {
+  handle500Statuses,
+  handlePSQL400s,
+  handleCustomErrors,
+} = require("../be-nc-news/controllers/errorControllers");
 
 app.get("/api/topics", fetchAllTopics);
 app.get("/api/articles", fetchAllArticles);
+app.get("/api/articles/:article_id", getArticleById);
+app.use(handlePSQL400s);
+app.use(handleCustomErrors);
+app.use(handle500Statuses);
 
-app.use(error500);
 module.exports = app;

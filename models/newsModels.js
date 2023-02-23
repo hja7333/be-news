@@ -1,11 +1,11 @@
 const db = require("../db/connection");
 
-function fetchTopics() {
+exports.fetchTopics = () => {
   return db.query(`SELECT * FROM topics;`).then((topics) => {
     return topics.rows;
   });
-}
-function fetchArticles() {
+};
+exports.fetchArticles = () => {
   return db
     .query(
       `SELECT 
@@ -19,6 +19,22 @@ function fetchArticles() {
     .then((articles) => {
       return articles.rows;
     });
-}
+};
 
-module.exports = { fetchTopics, fetchArticles };
+exports.fetchArticleById = (id) => {
+  return db
+    .query(
+      `SELECT author, title, article_id, body, topic, created_at, votes, article_img_url FROM articles WHERE article_id = $1`,
+      [id]
+    )
+    .then(({ rows: articles }) => {
+      if (articles.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "no article found",
+        });
+      } else {
+        return articles[0];
+      }
+    });
+};
