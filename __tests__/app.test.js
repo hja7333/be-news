@@ -136,4 +136,12 @@ describe("app", () => {
         expect(body.msg).toBe("not found");
       });
   });
+  test("200: GET - Responds with an empty array for article_id with no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
 });
