@@ -1,10 +1,13 @@
-const { fetchTopics, fetchArticles } = require("../models/newsModels");
+const {
+  fetchTopics,
+  fetchArticles,
+  fetchArticleById,
+} = require("../models/newsModels");
 
 function fetchAllTopics(request, response) {
   fetchTopics()
-    .then((data) => {
-      console.log(data);
-      response.status(200).send({ topics: data });
+    .then((topicData) => {
+      response.status(200).send({ topics: topicData });
     })
     .catch((err) => {
       next(err);
@@ -21,4 +24,15 @@ function fetchAllArticles(request, response) {
     });
 }
 
-module.exports = { fetchAllTopics, fetchAllArticles };
+function getArticleById(request, response, next) {
+  const { article_id } = request.params;
+  fetchArticleById(article_id)
+    .then((article) => {
+      response.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+module.exports = { fetchAllTopics, fetchAllArticles, getArticleById };
