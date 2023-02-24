@@ -9,7 +9,7 @@ beforeEach(() => {
 });
 
 afterAll(() => {
-  return db.end();
+  db.end();
 });
 
 describe("app", () => {
@@ -142,6 +142,43 @@ describe("app", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).toEqual([]);
+      });
+  });
+  test("201: POST - Request body accepts an object with the following properties, username, body, and Responds with the posted comment ", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Do not read!",
+    };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(201)
+      .then((response) => {
+        expect(typeof response.body).toBe("object");
+        expect(response.body.commentAdded).toMatchObject({
+          author: newComment.username,
+          article_id: 3,
+          created_at: expect.any(String),
+          votes: 0,
+          comment_id: 19,
+          body: newComment.body,
+        });
+      });
+  });
+  test("400: GET invalid article_id parametric endpoint", () => {
+    return request(app)
+      .get("/api/articles/bananas/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("404: GET responds with correct message for valid but non-existent article_ids", () => {
+    return request(app)
+      .get("/api/articles/5000/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
       });
   });
 });

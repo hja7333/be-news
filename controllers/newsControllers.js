@@ -3,6 +3,7 @@ const {
   fetchArticles,
   fetchArticleById,
   fetchCommentsForArticle,
+  addToComments,
 } = require("../models/newsModels");
 
 function fetchAllTopics(request, response) {
@@ -35,7 +36,6 @@ function getArticleById(request, response, next) {
       response.status(200).send({ article });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 }
@@ -54,9 +54,22 @@ function getCommentsForArticle(request, response, next) {
       next(err);
     });
 }
+function addComments(request, response, next) {
+  const { article_id } = request.params;
+  const newComment = request.body;
+  addToComments(newComment, article_id)
+    .then((commentAdded) => {
+      response.status(201).send({ commentAdded });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   fetchAllTopics,
   fetchAllArticles,
   getArticleById,
   getCommentsForArticle,
+  addComments,
 };

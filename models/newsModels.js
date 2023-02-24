@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-// const articles = require("../db/data/test-data/articles");
+const articles = require("../db/data/test-data/articles");
 
 exports.fetchTopics = () => {
   return db.query(`SELECT * FROM topics;`).then((topics) => {
@@ -47,5 +47,15 @@ exports.fetchCommentsForArticle = (id) => {
     )
     .then(({ rows: comments }) => {
       return comments;
+    });
+};
+exports.addToComments = (newComment, article_id) => {
+  return db
+    .query(
+      `INSERT INTO comments (author, body, article_id) VALUES($1, $2, $3)RETURNING*`,
+      [newComment.username, newComment.body, article_id]
+    )
+    .then((comment) => {
+      return comment.rows[0];
     });
 };
