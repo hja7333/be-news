@@ -9,7 +9,7 @@ beforeEach(() => {
 });
 
 afterAll(() => {
-  return db.end();
+  db.end();
 });
 
 describe("app", () => {
@@ -17,8 +17,8 @@ describe("app", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
-      .then((response) => {
-        expect(response.body.topics).toBeInstanceOf(Array);
+      .then(({ body }) => {
+        expect(body.topics).toBeInstanceOf(Array);
       });
   });
 
@@ -142,6 +142,83 @@ describe("app", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).toEqual([]);
+      });
+  });
+  test("201: POST - Request body accepts an object with the following properties, username, body, and Responds with the posted comment ", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Do not read!",
+    };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(typeof body).toBe("object");
+        expect(body.commentAdded).toMatchObject({
+          author: newComment.username,
+          article_id: 3,
+          created_at: expect.any(String),
+          votes: 0,
+          comment_id: 19,
+          body: newComment.body,
+        });
+      });
+  });
+  test("400: POST invalid article_id parametric endpoint", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Do not read!",
+    };
+    return request(app)
+      .post("/api/articles/bananas/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400: POST responds with correct message for valid but non-existent article_ids", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Do not read!",
+    };
+    return request(app)
+      .post("/api/articles/5000/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400: POST responds with 400 if username and comment are missing", () => {
+    const newComment = {};
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400: POST responds with 400 if comment is missing", () => {
+    const newComment = { username: "butter_bridge" };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400: POST responds with 400 if username is not in the db", () => {
+    const newComment = { username: "Jon", body: "test" };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
       });
   });
 });

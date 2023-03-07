@@ -3,6 +3,8 @@ const {
   fetchArticles,
   fetchArticleById,
   fetchCommentsForArticle,
+  addToComments,
+  selectUser,
 } = require("../models/newsModels");
 
 function fetchAllTopics(request, response) {
@@ -35,28 +37,40 @@ function getArticleById(request, response, next) {
       response.status(200).send({ article });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 }
-
 function getCommentsForArticle(request, response, next) {
   const { article_id } = request.params;
   const commentsPromise = fetchCommentsForArticle(article_id);
   const checkArticle = fetchArticleById(article_id);
   Promise.all([commentsPromise, checkArticle])
+
     .then((result) => {
       const comments = result[0];
-
       response.status(200).send({ comments });
     })
     .catch((err) => {
       next(err);
     });
 }
+function addComments(request, response, next) {
+  const { article_id } = request.params;
+  const newComment = request.body;
+
+  addToComments(newComment, article_id)
+    .then((commentAdded) => {
+      response.status(201).send({ commentAdded });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   fetchAllTopics,
   fetchAllArticles,
   getArticleById,
   getCommentsForArticle,
+  addComments,
 };
