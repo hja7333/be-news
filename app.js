@@ -22,7 +22,8 @@ app.post("/api/articles/:article_id/comments", addComments);
 app.all("/*", (request, response) => {
   response.status(404).send({ msg: "not found" });
 });
-app.use(handlePSQL400s);
 app.use(handleCustomErrors);
+app.use(handlePSQL400s);
+
 app.use(handle500Statuses);
 module.exports = app;

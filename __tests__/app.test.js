@@ -17,8 +17,8 @@ describe("app", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
-      .then((response) => {
-        expect(response.body.topics).toBeInstanceOf(Array);
+      .then(({ body }) => {
+        expect(body.topics).toBeInstanceOf(Array);
       });
   });
 
@@ -153,9 +153,9 @@ describe("app", () => {
       .post("/api/articles/3/comments")
       .send(newComment)
       .expect(201)
-      .then((response) => {
-        expect(typeof response.body).toBe("object");
-        expect(response.body.commentAdded).toMatchObject({
+      .then(({ body }) => {
+        expect(typeof body).toBe("object");
+        expect(body.commentAdded).toMatchObject({
           author: newComment.username,
           article_id: 3,
           created_at: expect.any(String),
@@ -165,20 +165,60 @@ describe("app", () => {
         });
       });
   });
-  test("400: GET invalid article_id parametric endpoint", () => {
+  test("400: POST invalid article_id parametric endpoint", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Do not read!",
+    };
     return request(app)
-      .get("/api/articles/bananas/comments")
+      .post("/api/articles/bananas/comments")
+      .send(newComment)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("404: GET responds with correct message for valid but non-existent article_ids", () => {
+  test("400: POST responds with correct message for valid but non-existent article_ids", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Do not read!",
+    };
     return request(app)
-      .get("/api/articles/5000/comments")
-      .expect(404)
+      .post("/api/articles/5000/comments")
+      .send(newComment)
+      .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found");
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400: POST responds with 400 if username and comment are missing", () => {
+    const newComment = {};
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400: POST responds with 400 if comment is missing", () => {
+    const newComment = { username: "butter_bridge" };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400: POST responds with 400 if username is not in the db", () => {
+    const newComment = { username: "Jon", body: "test" };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
       });
   });
 });

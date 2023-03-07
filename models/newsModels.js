@@ -52,10 +52,17 @@ exports.fetchCommentsForArticle = (id) => {
 exports.addToComments = (newComment, article_id) => {
   return db
     .query(
-      `INSERT INTO comments (author, body, article_id) VALUES($1, $2, $3)RETURNING*`,
+      `INSERT INTO comments (author, body, article_id) VALUES($1, $2, $3) RETURNING *`,
       [newComment.username, newComment.body, article_id]
     )
     .then((comment) => {
       return comment.rows[0];
+    });
+};
+exports.selectUser = (username) => {
+  return db
+    .query(`SELECT username FROM users WHERE username = $1;`, username)
+    .then(({ rows: users }) => {
+      return users;
     });
 };
