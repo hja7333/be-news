@@ -6,13 +6,13 @@ const {
   getArticleById,
   getCommentsForArticle,
   addComments,
-} = require("../be-nc-news/controllers/newsControllers");
+} = require("./controllers/newsControllers");
 
 const {
   handle500Statuses,
   handlePSQL400s,
   handleCustomErrors,
-} = require("../be-nc-news/controllers/errorControllers");
+} = require("./controllers/errorControllers");
 app.use(express.json());
 app.get("/api/topics", fetchAllTopics);
 app.get("/api/articles", fetchAllArticles);
