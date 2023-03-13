@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const {
   fetchAllTopics,
@@ -13,6 +14,7 @@ const {
   handlePSQL400s,
   handleCustomErrors,
 } = require("./controllers/errorControllers");
+app.use(cors());
 app.use(express.json());
 app.get("/api/topics", fetchAllTopics);
 app.get("/api/articles", fetchAllArticles);
